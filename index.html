@@ -2,28 +2,109 @@
 <html lang="en">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>SYSTEM FAILURE</title>
+<title>Congratulations</title>
 
 <style>
 html, body {
-    
   margin: 0;
   height: 100%;
-  background: black;
   overflow: hidden;
-  touch-action: none;
-  user-select: none;
-  font-family: system-ui, monospace;
+  background: black;
+  font-family: system-ui, sans-serif;
 }
 
-#screen {
+/* ================= WIN PAGE ================= */
+#winPage {
   position: fixed;
   inset: 0;
-  background: #000;
-  color: #ddd;
+  background: radial-gradient(circle at top, #2a0055, #000);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 10;
 }
 
-/* Core text */
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  background: hsl(var(--h),90%,60%);
+  top: -20px;
+  animation: fall 4s linear infinite;
+}
+@keyframes fall { to { transform: translateY(120vh) rotate(720deg); } }
+
+.glitter {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: gold;
+  animation: fall 3s linear infinite;
+}
+
+.balloon {
+  position: absolute;
+  bottom: -80px;
+  width: 40px;
+  height: 55px;
+  border-radius: 50%;
+  animation: float 7s linear infinite;
+}
+@keyframes float { to { transform: translateY(-140vh); } }
+
+.firework {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  animation: boom 1.2s ease-out infinite;
+}
+@keyframes boom {
+  from { transform: scale(0); opacity: 1; }
+  to { transform: scale(12); opacity: 0; }
+}
+
+#claimBtn {
+  margin-top: 24px;
+  padding: 16px 30px;
+  background: gold;
+  color: black;
+  font-weight: bold;
+  border-radius: 30px;
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse { 50% { transform: scale(1.08); } }
+
+/* ================= CRASH PAGE ================= */
+#crashPage {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: white;
+  z-index: 20;
+}
+
+/* TERMINAL BACKGROUND (FAST GREEN) */
+#terminal {
+  position: fixed;
+  inset: 0;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.3;
+  opacity: 0.55;
+  color: #00ff66;
+  padding: 14px;
+  white-space: pre;
+  z-index: 1;
+  text-shadow: 0 0 4px rgba(0,255,100,.6);
+}
+
+/* MAIN WARNING */
 #core {
   position: absolute;
   inset: 0;
@@ -32,284 +113,244 @@ html, body {
   justify-content: center;
   text-align: center;
   z-index: 5;
-  filter: contrast(130%) saturate(130%);
 }
 
-/* Scanlines */
-#screen::after {
+#core h1 {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+/* Subtle text instability */
+@keyframes subtleJitter {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(-1px,0); }
+  50% { transform: translate(1px,0); }
+  75% { transform: translate(0,1px); }
+}
+.subtle {
+  animation: subtleJitter 0.25s infinite;
+}
+
+/* CRT scanlines */
+#crashPage::after {
   content: "";
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(255,255,255,0.04),
-    rgba(255,255,255,0.04) 1px,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.06) 1px,
     transparent 1px,
     transparent 3px
   );
   pointer-events: none;
-  z-index: 9;
+  z-index: 30;
 }
 
-/* Horizontal tear */
-.strip {
-  position: absolute;
+/* ===== HEAVY SCREEN TEARING ===== */
+.tear {
+  position: fixed;
+  left: 0;
   width: 100%;
-  height: 6px;
+  height: 14px;
   background: inherit;
-  filter: brightness(150%) contrast(160%);
-  z-index: 7;
+  z-index: 40;
+  filter: brightness(140%) contrast(130%);
 }
 
-/* Vertical tear */
-.vstrip {
-  position: absolute;
-  height: 100%;
-  width: 8px;
-  background: inherit;
-  filter: brightness(160%);
-  z-index: 7;
-}
-
-/* Pixel corruption */
-#pixels {
+/* ===== FULL-SCREEN PANIC FLOODS ===== */
+.flash {
   position: fixed;
   inset: 0;
-  background: repeating-linear-gradient(
-    90deg,
-    rgba(255,255,255,0.03) 0px,
-    rgba(255,255,255,0.03) 1px,
-    transparent 1px,
-    transparent 4px
-  );
-  mix-blend-mode: difference;
   opacity: 0;
-  z-index: 8;
+  z-index: 60;
+  pointer-events: none;
 }
-
-/* Color floods */
-.flash { position: fixed; inset: 0; opacity: 0; z-index: 20; }
-#blue { background:#0055ff; }
-#red { background:#ff0000; }
-#green { background:#00ff55; }
-
-/* Warning */
-#warning {
-  position: fixed;
-  bottom: 12%;
-  width: 100%;
-  text-align: center;
-  color: #ff4444;
-  font-size: 14px;
-  opacity: 0;
-  animation: blink 1.1s infinite;
-  z-index: 10;
-}
-
-@keyframes blink {
-  0%,50% { opacity: 0; }
-  51%,100% { opacity: 1; }
-}
-
-/* Text jitter */
-@keyframes jitter {
-  0% { transform: translate(0,0); }
-  25% { transform: translate(-2px,1px); }
-  50% { transform: translate(2px,-1px); }
-  75% { transform: translate(-1px,-2px); }
-}
-.jitter { animation: jitter 0.12s infinite; }
-
-#tapBlock {
-  position: fixed;
-  inset: 0;
-  background: black;
-  color: #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  z-index: 9999;
-  font-family: system-ui, monospace;
-  animation: tapFlicker 1.5s infinite;
-}
-
-@keyframes tapFlicker {
-  0%,90% { opacity: 1; }
-  95% { opacity: 0.4; }
-  100% { opacity: 1; }
-}
-
+#red  { background: #ff0000; }
+#blue { background: #0033ff; }
 </style>
 </head>
 
 <body>
 
-<div id="screen">
-  <div id="core" class="jitter">
+<!-- WIN PAGE -->
+<div id="winPage">
+  <h1>🏆 YOU WON!</h1>
+  <p>Congratulations! You unlocked a reward.</p>
+  <div id="claimBtn">🎁 Tap to claim reward</div>
+</div>
+
+<!-- CRASH PAGE -->
+<div id="crashPage">
+  <pre id="terminal"></pre>
+
+  <div id="core" class="subtle">
     <div>
-      <h2>⚠ CRITICAL SYSTEM FAILURE</h2>
-      <p>Display driver stopped responding</p>
-      <p style="opacity:.6">VIDEO_TDR_FAILURE</p>
+      <h1>CRITICAL SYSTEM FAILURE</h1>
+      <p>UNAUTHORIZED PROCESS EXECUTION</p>
+      <p style="opacity:.6">DISPLAY BUFFER COMPROMISED</p>
     </div>
   </div>
 
-  <div id="warning">⚠ DEVICE OVERHEATING — INPUT DISABLED</div>
-  <div id="pixels"></div>
-
-  <div id="blue" class="flash"></div>
   <div id="red" class="flash"></div>
-  <div id="green" class="flash"></div>
+  <div id="blue" class="flash"></div>
 </div>
 
 <!-- AUDIO -->
-<audio id="staticSound" loop preload="auto">
+<audio id="winSound" loop>
+  <source src="win-yay.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="staticSound" loop>
   <source src="crash-static.mp3" type="audio/mpeg">
 </audio>
 
-<audio id="beepSound" preload="auto">
+<audio id="beepSound">
   <source src="system-beep.mp3" type="audio/mpeg">
 </audio>
 
-<div id="tapBlock">
-  <div>
-    <h2>⚠ System instability detected</h2>
-    <p>Tap to continue</p>
-  </div>
-</div>
-
 <script>
-/* ===== FULLSCREEN ===== */
-document.documentElement.requestFullscreen?.().catch(()=>{});
+/* ===== WIN EFFECTS ===== */
+const win = document.getElementById("winPage");
 
-/* ===== BACK BUTTON (BLOCK AT LEAST 2 TIMES) ===== */
-let backCount = 0;
-function lockBack() { history.pushState(null,"",location.href); }
-lockBack();
-
-window.addEventListener("popstate", () => {
-  backCount++;
-  if (backCount <= 2) lockBack();
-});
-
-/* ===== BLOCK TOUCH ===== */
-document.addEventListener("touchmove", e => e.preventDefault(), { passive:false });
-
-/* ===== APP SWITCH LOOP ===== */
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) location.reload();
-});
-
-/* ===== SOUND CONTROL ===== */
-const staticSound = document.getElementById("staticSound");
-const beepSound = document.getElementById("beepSound");
-let soundStarted = false;
-
-document.getElementById("tapBlock").addEventListener("click", () => {
-  // Start audio
-  staticSound.volume = 0.4;
-  staticSound.play().catch(()=>{});
-  soundStarted = true;
-
-  // Remove tap overlay
-  document.getElementById("tapBlock").remove();
-});
-
-/* Volume instability */
-setInterval(() => {
-  if (soundStarted) {
-    staticSound.volume = 0.2 + Math.random() * 0.4;
-  }
-}, 900);
-
-/* Random system beep */
-setInterval(() => {
-  if (soundStarted && Math.random() > 0.85) {
-    beepSound.currentTime = 0;
-    beepSound.play().catch(()=>{});
-  }
-}, 3000);
-
-
-/* ===== HORIZONTAL TEARS ===== */
-setInterval(() => {
-  if (Math.random() > 0.6) {
-    const s = document.createElement("div");
-    s.className = "strip";
-    s.style.top = Math.random()*innerHeight+"px";
-    s.style.transform = `translateX(${Math.random()*60-30}px)`;
-    document.body.appendChild(s);
-    setTimeout(()=>s.remove(),120);
-  }
-},120);
-
-/* ===== VERTICAL TEARS ===== */
-setInterval(() => {
-  if (Math.random() > 0.75) {
-    const v = document.createElement("div");
-    v.className = "vstrip";
-    v.style.left = Math.random()*innerWidth+"px";
-    v.style.transform = `translateY(${Math.random()*60-30}px)`;
-    document.body.appendChild(v);
-    setTimeout(()=>v.remove(),140);
-  }
-},200);
-
-/* ===== PIXEL CORRUPTION ===== */
-setInterval(() => {
-  document.getElementById("pixels").style.opacity =
-    Math.random()>0.6 ? 0.15 : 0;
-},180);
-
-/* ===== COLOR FLOODS ===== */
-function flash(id,time=120){
-  const f=document.getElementById(id);
-  f.style.opacity=1;
-  setTimeout(()=>f.style.opacity=0,time);
+for(let i=0;i<80;i++){
+  const c=document.createElement("div");
+  c.className="confetti";
+  c.style.left=Math.random()*100+"vw";
+  c.style.setProperty("--h",Math.random()*360);
+  win.appendChild(c);
 }
-
+for(let i=0;i<40;i++){
+  const g=document.createElement("div");
+  g.className="glitter";
+  g.style.left=Math.random()*100+"vw";
+  win.appendChild(g);
+}
+for(let i=0;i<10;i++){
+  const b=document.createElement("div");
+  b.className="balloon";
+  b.style.left=Math.random()*100+"vw";
+  b.style.background=`hsl(${Math.random()*360},80%,60%)`;
+  win.appendChild(b);
+}
 setInterval(()=>{
-  const r=Math.random();
-  if(r>0.92) flash("blue",160);
-  else if(r>0.88) flash("red",120);
-  else if(r>0.84) flash("green",120);
-},700);
-
-/* ===== HARD FREEZE ===== */
-setInterval(()=>{
-  if(Math.random()>0.9){
-    document.body.style.filter="grayscale(100%) contrast(220%)";
-    setTimeout(()=>document.body.style.filter="",320);
-  }
+  const f=document.createElement("div");
+  f.className="firework";
+  f.style.left=Math.random()*100+"vw";
+  f.style.top=Math.random()*40+"vh";
+  win.appendChild(f);
+  setTimeout(()=>f.remove(),1200);
 },900);
 
-/* ===== OVERHEAT WARNING ===== */
-setInterval(()=>{
-  document.getElementById("warning").style.opacity =
-    Math.random()>0.6?1:0;
-},1600);
+/* ===== FAST FAKE TERMINAL COMMANDS ===== */
+const terminal = document.getElementById("terminal");
+const commands = [
+  ">> injecting payload into display buffer",
+  ">> bypassing frame sync protection",
+  ">> hijacking gpu interrupt handler",
+  ">> escalating privileges [SIMULATED]",
+  ">> rerouting video memory blocks",
+  ">> overwriting system compositor",
+  ">> forcing unauthorized draw calls",
+  ">> display pipeline compromised"
+];
 
-/* ===== STRONG VIBRATION ===== */
-if("vibrate" in navigator){
-  setInterval(()=>{
-    navigator.vibrate([200,60,200,60,300]);
-  },2600);
-}
-
-/* ===== ADMIN UNLOCK ===== */
-const p=new URLSearchParams(location.search);
-if(p.get("admin")==="unlock"){
-  localStorage.setItem("UNLOCK","1");
-  alert("System recovered");
-}
-
-setInterval(()=>{
-  if(localStorage.getItem("UNLOCK")==="1"){
-    document.exitFullscreen?.();
-    document.body.innerHTML =
-      "<h2 style='color:#0f0;text-align:center;margin-top:40vh'>✔ SYSTEM RESTORED</h2>";
+setInterval(() => {
+  terminal.textContent +=
+    commands[Math.floor(Math.random()*commands.length)] + "\n";
+  if (terminal.textContent.length > 4000) {
+    terminal.textContent =
+      terminal.textContent.slice(-3000);
   }
-},500);
+  terminal.scrollTop = terminal.scrollHeight;
+}, 60);
+
+/* ===== CLICK LOGIC ===== */
+const winSound = document.getElementById("winSound");
+const staticSound = document.getElementById("staticSound");
+const beepSound = document.getElementById("beepSound");
+
+let clickStage = 0;
+
+document.getElementById("claimBtn").onclick = () => {
+  clickStage++;
+
+  if (clickStage === 1) {
+    winSound.volume = 0.6;
+    winSound.play().catch(()=>{});
+    document.getElementById("claimBtn").innerText =
+      "🎁 Tap again to get reward";
+    return;
+  }
+
+  winSound.pause();
+  winSound.currentTime = 0;
+
+  win.remove();
+  document.getElementById("crashPage").style.display = "block";
+  document.documentElement.requestFullscreen?.().catch(()=>{});
+
+  staticSound.volume = 0.45;
+  staticSound.play().catch(()=>{});
+
+  /* BACK BLOCK (2 TIMES) */
+  let backCount = 0;
+  history.pushState(null,"",location.href);
+  window.onpopstate = () => {
+    backCount++;
+    if (backCount <= 2) history.pushState(null,"",location.href);
+  };
+
+  /* MASSIVE SCREEN TEARING */
+  setInterval(() => {
+    for (let i = 0; i < 3; i++) {
+      const t = document.createElement("div");
+      t.className = "tear";
+      t.style.top = Math.random()*window.innerHeight + "px";
+      t.style.transform =
+        `translateX(${Math.random()*120-60}px)`;
+      document.body.appendChild(t);
+      setTimeout(()=>t.remove(),140);
+    }
+  }, 70);
+
+  /* FULL-SCREEN RED / BLUE FLASH */
+  setInterval(() => {
+    const r = Math.random();
+    if (r > 0.9) burst("red", 120);
+    else if (r > 0.85) burst("blue", 150);
+  }, 450);
+
+  /* RANDOM BEEPS */
+  setInterval(() => {
+    if (Math.random() > 0.8) {
+      beepSound.currentTime = 0;
+      beepSound.play().catch(()=>{});
+    }
+  }, 2400);
+
+  /* VIBRATION */
+  if ("vibrate" in navigator) {
+    setInterval(() => {
+      navigator.vibrate([220,60,220,60,320]);
+    }, 2300);
+  }
+};
+
+/* ===== MULTI-FLASH BURST ===== */
+function burst(id, time) {
+  const f = document.getElementById(id);
+  let count = 0;
+  const i = setInterval(() => {
+    f.style.opacity = Math.random();
+    count++;
+    if (count > 5) {
+      clearInterval(i);
+      f.style.opacity = 0;
+    }
+  }, time / 5);
+}
 </script>
 
 </body>
