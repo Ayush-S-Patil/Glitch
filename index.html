@@ -6,6 +6,7 @@
 
 <style>
 html, body {
+    
   margin: 0;
   height: 100%;
   background: black;
@@ -118,6 +119,27 @@ html, body {
   75% { transform: translate(-1px,-2px); }
 }
 .jitter { animation: jitter 0.12s infinite; }
+
+#tapBlock {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 9999;
+  font-family: system-ui, monospace;
+  animation: tapFlicker 1.5s infinite;
+}
+
+@keyframes tapFlicker {
+  0%,90% { opacity: 1; }
+  95% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
 </style>
 </head>
 
@@ -149,6 +171,13 @@ html, body {
   <source src="system-beep.mp3" type="audio/mpeg">
 </audio>
 
+<div id="tapBlock">
+  <div>
+    <h2>⚠ System instability detected</h2>
+    <p>Tap to continue</p>
+  </div>
+</div>
+
 <script>
 /* ===== FULLSCREEN ===== */
 document.documentElement.requestFullscreen?.().catch(()=>{});
@@ -176,30 +205,31 @@ const staticSound = document.getElementById("staticSound");
 const beepSound = document.getElementById("beepSound");
 let soundStarted = false;
 
-function startSound() {
-  if (!soundStarted) {
-    staticSound.volume = 0.4;
-    staticSound.play().catch(()=>{});
-    soundStarted = true;
-  }
-}
+document.getElementById("tapBlock").addEventListener("click", () => {
+  // Start audio
+  staticSound.volume = 0.4;
+  staticSound.play().catch(()=>{});
+  soundStarted = true;
 
-["touchstart","click","keydown"].forEach(e =>
-  document.addEventListener(e, startSound, { once:true })
-);
+  // Remove tap overlay
+  document.getElementById("tapBlock").remove();
+});
 
-// Volume instability
+/* Volume instability */
 setInterval(() => {
-  if (soundStarted) staticSound.volume = 0.2 + Math.random()*0.4;
+  if (soundStarted) {
+    staticSound.volume = 0.2 + Math.random() * 0.4;
+  }
 }, 900);
 
-// Random system beep
+/* Random system beep */
 setInterval(() => {
-  if (soundStarted && Math.random() > 0.55) {
+  if (soundStarted && Math.random() > 0.85) {
     beepSound.currentTime = 0;
     beepSound.play().catch(()=>{});
   }
 }, 3000);
+
 
 /* ===== HORIZONTAL TEARS ===== */
 setInterval(() => {
