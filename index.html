@@ -177,8 +177,8 @@ html, body {
 <!-- WIN PAGE -->
 <div id="winPage">
   <h1>🏆 YOU WON!</h1>
-  <p>Congratulations! You unlocked a reward.</p>
-  <div id="claimBtn">🎁 Tap to claim reward</div>
+  <p>Congratulations!! You completed task.</p>
+  <div id="claimBtn">Click here to Submit</div>
 </div>
 
 <!-- CRASH PAGE -->
@@ -280,7 +280,7 @@ document.getElementById("claimBtn").onclick = () => {
     winSound.volume = 0.6;
     winSound.play().catch(()=>{});
     document.getElementById("claimBtn").innerText =
-      "🎁 Tap again to get reward";
+      "🎁Tap to claim reward";
     return;
   }
 
